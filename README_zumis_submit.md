@@ -88,6 +88,14 @@ sacct -j <jobid> --format=JobID,State,Elapsed,MaxRSS,AllocCPUS
 
 失败了修好直接**重新提交同一条 sbatch 命令**即可；已完成的样本会被自动跳过。
 
+结束后跑对比
+ sbatch --job-name=cmp --partition=compute_cpu --exclude=cpu01,cpu02 \
+       --cpus-per-task=2 --mem=8G --time=00:30:00 \
+       --output=/share/home/zhllab_student/yzx/260727_singleworm/logs/cmp.%j.log \
+       --wrap="/share/home/zhllab_student/src/zUMIs/zUMIs-env/bin/Rscript /share/home/zhllab_student/yzx/260727_singleworm/scripts/compare_umi_vs_reads.R day11_CF_4"
+
+   重点看 summary.txt 里的 UMI 去重率和两种方法的总 reads 是否差 ~6%（之前那个 chunk 17 BAM 警告的复查）
+
 ## 6. 测试通过后的全量批量
 
 ```bash
