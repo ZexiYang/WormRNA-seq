@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=zumis-test
 #SBATCH --partition=compute_cpu
-#SBATCH --nodelist=cpu02
+#SBATCH --exclude=cpu01,cpu02   # 2026-08-01: cpu01/cpu02 /share 挂载故障, 排除; 不指定节点让调度器自选
 #SBATCH --time=1-00:00:00
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=90G
