@@ -89,10 +89,19 @@ sacct -j <jobid> --format=JobID,State,Elapsed,MaxRSS,AllocCPUS
 失败了修好直接**重新提交同一条 sbatch 命令**即可；已完成的样本会被自动跳过。
 
 结束后跑对比
- sbatch --job-name=cmp --partition=compute_cpu --exclude=cpu01,cpu02 \
-       --cpus-per-task=2 --mem=8G --time=00:30:00 \
-       --output=/share/home/zhllab_student/yzx/260727_singleworm/logs/cmp.%j.log \
-       --wrap="/share/home/zhllab_student/src/zUMIs/zUMIs-env/bin/Rscript /share/home/zhllab_student/yzx/260727_singleworm/scripts/compare_umi_vs_reads.R day11_CF_4"
+      1  #!/bin/bash
+      2  #SBATCH --job-name=cmp
+      3  #SBATCH --partition=compute_cpu
+      4  #SBATCH --exclude=cpu01,cpu02
+      5  #SBATCH --cpus-per-task=2
+      6  #SBATCH --mem=8G
+      7  #SBATCH --time=00:30:00
+      8  #SBATCH --output=/share/home/zhllab_student/yzx/260727_singleworm/logs/cmp.%j.log
+      9  # 对比 featureCounts(reads) vs zUMIs(UMI) 两种定量
+     10  # 用法: sbatch 04_compare.sbatch <sample>   例: sbatch 04_compare.sbatch day11_CF_4
+   ... (6 more lines, 16 total, ctrl+o to expand)
+
+   Approved for session: Writing /home/zexi_1028/rnaseq_project/singleworm_260727/pipeline/04_compare.sbatch
 
    重点看 summary.txt 里的 UMI 去重率和两种方法的总 reads 是否差 ~6%（之前那个 chunk 17 BAM 警告的复查）
 
