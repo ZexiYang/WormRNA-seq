@@ -48,7 +48,7 @@ sequence_files:
   file1:
     name: $R1
     base_definition:
-      - cDNA(23-150)
+      - BC(1-11)
       - UMI(12-19)
     find_pattern: ATTGCGCAATG
   file2:
@@ -74,10 +74,10 @@ filter_cutoffs:
     num_bases: 1
     phred: 20
 barcodes:
-  barcode_num: null
+  barcode_num: 1
   barcode_file: null
   barcode_sharing: null
-  automatic: yes
+  automatic: no
   BarcodeBinning: 1
   nReadsperCell: 100
   demultiplex: no
