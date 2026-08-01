@@ -3,7 +3,7 @@
 #SBATCH --partition=compute_cpu
 #SBATCH --nodelist=cpu02
 #SBATCH --time=1-00:00:00
-#SBATCH --cpus-per-task=32
+#SBATCH --cpus-per-task=16
 #SBATCH --mem=90G
 #SBATCH --output=/share/home/zhllab_student/yzx/260727_singleworm/logs/zumis-test.%j.log
 # =============================================================================
@@ -13,13 +13,13 @@
 # 输入: 01raw_data/<sample>/<sample>_1.fq.gz, _2.fq.gz (150bp PE, Smart-seq3)
 # 输出: 06zumis/<sample>/  (zUMIs 全部输出, 含 UMI counts)
 #       06zumis/yamls/<sample>.zUMIs.yaml
-# 与 fat 批量版的唯一区别: 线程数 32 / mem_limit 80G (适配 cpu02 的 56c/100G)
+# 与 fat 批量版的唯一区别: 线程数 16 (32 会 OOM: ~30 路并行 STAR 超 90G) / mem_limit 80G
 # =============================================================================
 set -euo pipefail
 unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY ALL_PROXY all_proxy
 
 SAMPLE=${1:?用法: sbatch zumis-test-cpu02.sbatch <sample_name>}
-THREADS=32
+THREADS=16
 MEMLIMIT=80   # zUMIs mem_limit (GB), 供 STAR 排序使用; 线虫基因组小, 80G 足够
 
 BASE=/share/home/zhllab_student/yzx/260727_singleworm
