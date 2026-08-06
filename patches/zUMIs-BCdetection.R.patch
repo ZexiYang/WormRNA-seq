@@ -1,0 +1,12 @@
+--- zUMIs-BCdetection.R.bak	2026-08-05 00:39:41.730616000 +0800
++++ zUMIs-BCdetection.R	2026-08-05 00:39:42.217768000 +0800
+@@ -47,6 +47,9 @@
+   binmap_additional <- binmap[, .(addtl = sum(n)), by = trueBC]
+   bccount[match(binmap_additional$trueBC,XC),n := n + binmap_additional$addtl]
+   fwrite(bccount,file=paste0(opt$out_dir,"/zUMIs_output/",opt$project,"kept_barcodes_binned.txt"))
++} else {
++  # patch 2026-08-01: also write binned file when binning disabled (counting reads it unconditionally)
++  fwrite(bccount,file=paste0(opt$out_dir,"/zUMIs_output/",opt$project,"kept_barcodes_binned.txt"))
+ }
+ 
+ ##############################################################

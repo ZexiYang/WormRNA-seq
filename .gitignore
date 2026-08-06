@@ -1,0 +1,12 @@
+# 环境与大文件不进仓库
+env/
+zUMIs/
+*.sif
+*.bam
+*.bai
+*.fq.gz
+*.fastq.gz
+*.loom
+*.rds
+__pycache__/
+logs/

@@ -1,0 +1,13 @@
+--- fqfilter_v2.pl.bak.20260803	2026-08-05 00:36:22.745421000 +0800
++++ fqfilter_v2.pl	2026-08-05 00:39:42.211884000 +0800
+@@ -262,6 +262,10 @@
+     # concatenate according to given ranges with other files
+     ($bcseq, $bcqseq, $ubseq, $ubqseq, $cseqr1, $cqseqr1, $cseqr2, $cqseqr2) = ($bcseq.$bcseq1, $bcqseq.$bcqseq1, $ubseq.$ubseq1, $ubqseq.$ubqseq1, $cseqr1.$cseq1, $cqseqr1.$cqseq1, $cseqr2.$cseq2, $cqseqr2.$cqseq2);
+ 	}
++    # patch 2026-08-03: Smart-seq3 bulk config has no BC() defined, leaving BC empty;
++    # empty BC breaks downstream (R fread NA in kept_barcodes, ScanBamParam tagFilter rejects NA).
++    # Assign a constant placeholder BC to all reads (single-cell-bulk mode).
++    if($bcseq eq ""){ $bcseq = "CELL1"; $bcqseq = "IIIII"; }
+ #next if($flag = 1); # if correct_Frame is present and the pattern is not found in the read
+ 
+     # Check the quality filter thresholds given

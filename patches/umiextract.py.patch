@@ -1,0 +1,20 @@
+--- /share/home/zhllab_student/singleworm_smartseq3/umite/env/lib/python3.9/site-packages/umite/umiextract.py.bak.20260806	2026-08-06 00:57:45.026954000 +0800
++++ /share/home/zhllab_student/singleworm_smartseq3/umite/env/lib/python3.9/site-packages/umite/umiextract.py	2026-08-06 00:57:45.041839000 +0800
+@@ -138,6 +138,8 @@
+         for entry1, entry2 in zip(r1_in, r2_in):
+             readcount += 1
+             entry1.name, _, _ = entry1.name.partition(' ')
++            if entry1.name.endswith(('/1', '/2')):
++                entry1.name = entry1.name[:-2]
+ 
+             # check for duplicated R1 readname, R2 is checked for consistency below
+             if entry1.name in readnames:
+@@ -160,6 +162,8 @@
+             # handle R2 readname: check it matches R1, also add umi
+             if entry2 is not None:
+                 entry2.name, _, _ = entry2.name.partition(' ')
++                if entry2.name.endswith(('/1', '/2')):
++                    entry2.name = entry2.name[:-2]
+                 if entry1.name != entry2.name:
+                     raise ValueError(( f"readname mismatch in R1 ({entry1.name}) and "
+                                        f"R2 ({entry2.name}) at read number {readcount}" ))
