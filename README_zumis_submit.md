@@ -89,21 +89,29 @@ sacct -j <jobid> --format=JobID,State,Elapsed,MaxRSS,AllocCPUS
 失败了修好直接**重新提交同一条 sbatch 命令**即可；已完成的样本会被自动跳过。
 
 结束后跑对比
-      1  #!/bin/bash
-      2  #SBATCH --job-name=cmp
-      3  #SBATCH --partition=compute_cpu
-      4  #SBATCH --exclude=cpu01,cpu02
-      5  #SBATCH --cpus-per-task=2
-      6  #SBATCH --mem=8G
-      7  #SBATCH --time=00:30:00
-      8  #SBATCH --output=/share/home/zhllab_student/yzx/260727_singleworm/logs/cmp.%j.log
-      9  # 对比 featureCounts(reads) vs zUMIs(UMI) 两种定量
-     10  # 用法: sbatch 04_compare.sbatch <sample>   例: sbatch 04_compare.sbatch day11_CF_4
-   ... (6 more lines, 16 total, ctrl+o to expand)
-
-   Approved for session: Writing /home/zexi_1028/rnaseq_project/singleworm_260727/pipeline/04_compare.sbatch
+#!/bin/bash
+#SBATCH --job-name=cmp
+#SBATCH --partition=compute_cpu
+#SBATCH --exclude=cpu01,cpu02
+#SBATCH --cpus-per-task=2
+#SBATCH --mem=8G
+#SBATCH --time=00:30:00
+#SBATCH --output=/share/home/zhllab_student/yzx/260727_singleworm/logs/cmp.%j.log
+# 对比 featureCounts(reads) vs zUMIs(UMI) 两种定量
+# 用法: sbatch 04_compare.sbatch <sample>   例: sbatch 04_compare.sbatch day11_CF_4
+set -euo pipefail
+SAMPLE=${1:?用法: sbatch 04_compare.sbatch <sample>}
+/share/home/zhllab_student/src/zUMIs/zUMIs-env/bin/Rscript \
+  /share/home/zhllab_student/yzx/260727_singleworm/scripts/compare_umi_vs_reads.R \
+  "$SAMPLE"
 
    重点看 summary.txt 里的 UMI 去重率和两种方法的总 reads 是否差 ~6%（之前那个 chunk 17 BAM 警告的复查）
+
+ 这个对比作业是干什么的
+   背景：你的 Smart-seq3 文库每条原始 read 带一个 UMI（8bp 随机标签，在扩增前加到原始分子上）。同一个原始分子被 PCR 扩增出 N 条拷贝，它们的 UMI 相同。之前的流程（fastp + STAR + featureCounts）：直接数 reads——一个被扩增 10 次的分子会被数 10 次，定量被 PCR 偏好性放大。zUMIs 流程：数的是不同的 UMI——同一个 UMI 的 N 条 reads 只算 1 个分子，还原真实的分子数。对比作业就是把同一只虫（day11_CF_4）的两种定量结果放在一起算三个东西：
+   1. UMI 去重率（reads ÷ UMI）：如果是 3，说明平均每个分子被测了 3 次，之前 featureCounts 的定量有 ~3 倍的 PCR 膨胀——这就是你要用 UMI 重跑全部样本的意义                                                      
+   2. 每基因相关性：两种方法测出的基因表达排序是否一致（散点图 + 相关系数）；如果高度相关，说明之前的 PCA/聚类结论定性上仍然可靠，只是绝对定量不准
+   3. 产量核对：zUMIs 的总 reads 是否明显少于 featureCounts（之前那个 chunk 17 BAM 损坏警告的复查）
 
 ## 6. 测试通过后的全量批量
 
