@@ -1,6 +1,6 @@
 # 环境与大文件不进仓库
 env/
-zUMIs/
+zUMIs-env/
 *.sif
 *.bam
 *.bai
